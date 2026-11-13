@@ -1,1 +1,16 @@
-{"name":"swd-study","version":"1.0.0","private":true,"scripts":{"start":"node server.mjs","test":"node tests.mjs"}}
+{
+  "name": "swd302-khang",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "start": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node tests.mjs"
+  },
+  "dependencies": { "react": "^19.0.0", "react-dom": "^19.0.0" },
+  "devDependencies": { "@vitejs/plugin-react": "^5.0.0", "vite": "^7.0.0" }
+}

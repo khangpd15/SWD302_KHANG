@@ -1,5 +1,6 @@
 import fs from 'node:fs';
-const lines=fs.readFileSync('../source-paragraphs.txt','utf8').replace(/^\uFEFF/,'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+if(!process.argv[2])throw Error('Usage: node extract.mjs <source-paragraphs.txt>');
+const lines=fs.readFileSync(process.argv[2],'utf8').replace(/^\uFEFF/,'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
 let chapter, q;const questions=[],chapters=[];
 for(const line of lines){
  let m;
@@ -17,5 +18,5 @@ const extra=[
 ];
 for(const [text,options,answer,tip] of extra)questions.push({id:questions.length+1,chapter:5,number:7+questions.length-198,text,options,answer,tip,supplemental:true});
 for(const q of questions)if(q.options.length!==4||q.answer<0)throw Error('Invalid '+q.id);
-fs.writeFileSync('dist/questions.js','window.QUIZ_DATA = '+JSON.stringify({chapters,questions},null,2)+';\n');
+fs.writeFileSync('src/data/questions.json',JSON.stringify({chapters,questions},null,2)+'\n');
 console.log(questions.map(q=>`${q.chapter}.${q.number} ${q.text} → ${q.options[q.answer]}`).join('\n'));

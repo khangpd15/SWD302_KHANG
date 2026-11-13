@@ -1,3 +1,8 @@
 node_modules/
 *.tar.gz
 *.log
+dist/
+.vercel/
+.env
+.env.*
+!.env.example

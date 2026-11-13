@@ -1,4 +1,4 @@
-window.QUIZ_DATA = {
+{
   "chapters": [
     {
       "id": 1,
@@ -2717,4 +2717,4 @@ window.QUIZ_DATA = {
       "supplemental": true
     }
   ]
-};
+}
