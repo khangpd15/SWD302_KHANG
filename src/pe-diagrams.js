@@ -57,18 +57,22 @@ function classDiagram(c, kind) {
 
 function sequence(c, kind) {
   const height = kind === 'library' ? 2500 : 2200;
+  const top = kind === 'library' ? 870 : 540;
   const g = graph(`${c.system} · Q2 ${c.usecase}`, 1900, height);
   const names = [c.actor, `${c.system} UI`, `${c.record}Service`, `${c.resource}Repository`, `${c.record}Repository`, `${c.payment}Repository`, `:${c.resource}`, `:${c.record}`, `:${c.payment}`, kind === 'library' ? c.staff : 'PaymentGateway'];
   const xs = names.map((name, i) => 105 + i * 185);
-  names.forEach((name, i) => { g.box(html(name), xs[i] - 80, 110, 160, 65, i === 0 || (kind === 'library' && i === 9) ? 'fillColor=#fff8df;' : 'fillColor=#efecfc;');g.line(xs[i], 175, xs[i], height - 180, '', 'endArrow=none;dashed=1;strokeColor=#c4c0d5;'); });
-  const msg = (from, to, label, y, reply = false) => g.line(xs[from], y, xs[to], y, label, reply ? 'dashed=1;' : '');
+  names.forEach((name, i) => {
+    const headY = i === 7 ? top + 90 - 32 : i === 8 && kind !== 'library' ? top + 185 - 32 : 110;
+    g.box(html(name), xs[i] - 80, headY, 160, 65, i === 0 || (kind === 'library' && i === 9) ? 'fillColor=#fff8df;' : 'fillColor=#efecfc;');
+    g.line(xs[i], headY + 65, xs[i], height - 180, '', 'endArrow=none;dashed=1;strokeColor=#c4c0d5;');
+  });
+  const msg = (from, to, label, y, reply = false) => g.line(xs[from], y, xs[to], y, label, reply || label.startsWith('«create»') ? 'dashed=1;' : 'endArrow=block;endFill=1;');
   const frame = (label, y, h) => g.box(html(label), 20, y, 1850, h, 'fillColor=none;strokeColor=#333333;align=left;verticalAlign=top;spacingTop=2;fontStyle=1;');
   msg(0, 1, 'selectResource(id, start, end)', 225);msg(1, 2, `create${c.record}(actorId, id, start, end)`, 280);
   msg(2, 3, 'isAvailable(id, start, end)', 335);msg(3, 6, 'isAvailable()', 390);msg(6, 3, 'available', 435, true);msg(3, 2, 'available', 480, true);
   if (kind === 'library') {
     msg(2, 5, 'hasUnpaidFine(readerId)', 535);msg(5, 8, 'getStatus()', 590);msg(8, 5, 'fineStatus', 645, true);msg(5, 2, 'hasUnpaidFine', 700, true);msg(2, 4, 'countActiveLoans(readerId)', 755);msg(4, 2, 'activeLoanCount', 810, true);
   }
-  const top = kind === 'library' ? 870 : 540;
   frame(`alt [${kind === 'library' ? 'available AND noUnpaidFine AND belowLimit' : 'available'}]`, top, 1250);
   msg(2, 7, `«create» ${c.record}(status=${kind === 'library' ? 'Requested' : 'Pending'})`, top + 90);
   msg(2, 4, `save(${c.record.toLowerCase()})`, top + 150);

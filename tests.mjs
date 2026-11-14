@@ -47,11 +47,19 @@ try {
  const {default:Walkthrough, Highlight}=await vite.ssrLoadModule('/src/PeWalkthrough.jsx');
  const {default:DrawioGuide}=await vite.ssrLoadModule('/src/DrawioGuide.jsx');
  const {cases}=await vite.ssrLoadModule('/src/pe-data.js');
- for (const kind of ['stayease','medicare']) for (const stage of ['setup','q1','q2','q3','export']) {
+ for (const kind of ['stayease','autogo','library','medicare']) for (const stage of ['setup','q1','q2','q3','export']) {
   const html=renderToString(createElement(DrawioGuide,{kind,config:cases[kind],stage,onStage:()=>{}}));
   assert.ok(html.includes('Cần dùng để hoàn thành') && html.includes('Khi nào phần này được xem là hoàn thành?'));
   if (['q1','q2','q3'].includes(stage)) assert.ok(html.includes('Hướng dẫn phân tích và điền nội dung') && html.includes('Phần B · Thao tác trên draw.io'));
-  if (stage==='q3') assert.ok(html.includes(kind==='stayease' ? 'Room=Cleaning' : 'Ít nhất 6 transitions có event.'));
+  if (['q1','q2','q3'].includes(stage)) {
+   assert.ok(html.includes('Hiểu ký hiệu và sửa lỗi UML') && html.includes('Xem đáp án và lý do'));
+   assert.ok(html.indexOf('Hiểu ký hiệu và sửa lỗi UML') < html.indexOf('Hướng dẫn phân tích và điền nội dung'));
+  }
+  if (stage==='q3') {
+   assert.ok(html.includes(kind==='medicare' ? 'Lập bảng chuyển trạng thái' : 'Q3 này cần Activity'));
+   if (kind==='medicare') assert.ok(html.includes('Ít nhất 6 transitions có event.'));
+   if (kind==='stayease') assert.ok(html.includes('Room=Cleaning'));
+  }
  }
  for (const kind of ['stayease', 'autogo', 'library', 'medicare']) {
   const lesson=renderToString(createElement(Walkthrough,{kind,onCustomize:()=>{}}));

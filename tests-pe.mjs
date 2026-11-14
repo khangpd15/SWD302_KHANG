@@ -24,6 +24,16 @@ assert.ok(matchKeywords('at most one Fine').some(r => r.example.includes('0..1')
 assert.equal(matchKeywords('').length, 0);
 for (const [kind, config] of Object.entries(cases)) {
   const xml = buildDrawio(config, kind);
+  const sequence = buildDrawio(config, kind, 'sequence');
+  const cells = [...sequence.matchAll(/<mxCell\b[\s\S]*?<\/mxCell>/g)].map(match => match[0]);
+  const call = cells.find(cell => cell.includes('isAvailable(') && cell.includes('edge="1"'));
+  assert.ok(call?.includes('endArrow=block;endFill=1;'), `${kind}: synchronous calls use filled heads`);
+  const create = cells.find(cell => cell.includes('«create»') && cell.includes('edge="1"'));
+  assert.ok(create?.includes('dashed=1;') && !create.includes('endArrow=block'), `${kind}: create message differs from synchronous call`);
+  const head = cells.find(cell => cell.includes(`value=":${config.record}"`));
+  const headY = Number(head?.match(/<mxGeometry[^>]* y="([\d.]+)"/)?.[1]);
+  const createY = Number(create?.match(/<mxPoint[^>]* y="([\d.]+)"/)?.[1]);
+  assert.ok(headY > 110 && Math.abs(createY-headY) < 75, `${kind}: created entity starts at create message`);
   assert.equal((xml.match(/<diagram /g) || []).length, 4);
   assert.ok(xml.includes('Repository&amp;lt;T&amp;gt;'));
   assert.ok(kind === 'library' ? xml.includes('countActiveLoans') : /payment failure/i.test(xml));

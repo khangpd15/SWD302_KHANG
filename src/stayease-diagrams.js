@@ -54,7 +54,7 @@ function sequence(c) {
   const x=[90,290,500,730,960,1190,1430,1650,1860];
   const names=[c.actor,'BookingUI','BookingController',`${c.resource}Repository`,'PaymentService','PaymentGateway',`${c.record}Repository`, `:${c.resource}`, `:${c.record}`];
   names.forEach((name,i)=>{const top=i===8 ? 1075 : 110;g.box(h(name),x[i]-85,top,170,75,'fillColor=#efecfc;');g.line(x[i],top+75,x[i],2240,'','endArrow=none;dashed=1;strokeColor=#c4c0d5;');});
-  const msg=(a,b,text,y,reply=false)=>g.line(x[a],y,x[b],y,text,reply?'dashed=1;':'');
+  const msg=(a,b,text,y,reply=false)=>g.line(x[a],y,x[b],y,text,reply || text.startsWith('«create»') ? 'dashed=1;' : 'endArrow=block;endFill=1;');
   msg(0,1,'submitBooking(roomId, start, end)',235);msg(1,2,'submitBooking(customerId, roomId, dates)',295);
   msg(2,3,'getById(roomId)',355);msg(3,2,'room',415,true);msg(2,3,'isAvailable(roomId, start, end)',475);msg(3,7,'isAvailable(start, end)',535);msg(7,3,'available',595,true);msg(3,2,'available',655,true);
   g.box('alt [Available]',25,710,2010,1460,'fillColor=none;strokeColor=#333333;align=left;verticalAlign=top;spacingTop=2;');
