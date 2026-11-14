@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "start": "vite --host 127.0.0.1",
-    "build": "node scripts/generate-pe-templates.mjs && vite build",
+    "build": "node scripts/generate-pe-templates.mjs && node scripts/generate-drawio-guide.mjs && vite build",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node tests.mjs && node tests-pe.mjs"
   },

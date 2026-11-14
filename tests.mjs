@@ -45,6 +45,13 @@ globalThis.window={location:{hash:'#home'}};
 try {
  const {default:App}=await vite.ssrLoadModule('/src/App.jsx');
  const {default:Walkthrough, Highlight}=await vite.ssrLoadModule('/src/PeWalkthrough.jsx');
+ const {default:DrawioGuide}=await vite.ssrLoadModule('/src/DrawioGuide.jsx');
+ const {cases}=await vite.ssrLoadModule('/src/pe-data.js');
+ for (const kind of ['stayease','medicare']) for (const stage of ['setup','q1','q2','q3','export']) {
+  const html=renderToString(createElement(DrawioGuide,{kind,config:cases[kind],stage,onStage:()=>{}}));
+  assert.ok(html.includes('Cần dùng để hoàn thành') && html.includes('Khi nào phần này được xem là hoàn thành?'));
+  if (stage==='q3') assert.ok(html.includes(kind==='stayease' ? 'Room=Cleaning' : 'Ít nhất 6 transitions có event.'));
+ }
  for (const kind of ['stayease', 'autogo', 'library', 'medicare']) {
   const lesson=renderToString(createElement(Walkthrough,{kind,onCustomize:()=>{}}));
   assert.ok(lesson.includes('Làm trong draw.io') && lesson.includes('<mark>') && lesson.includes('Dễ sai ở chỗ:'));

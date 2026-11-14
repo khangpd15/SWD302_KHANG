@@ -13,7 +13,7 @@ export function Highlight({ text, terms }) {
   return text.split(pattern).map((part, i) => i % 2 ? <mark key={i}>{part}</mark> : part);
 }
 
-export default function PeWalkthrough({ kind, onCustomize }) {
+export default function PeWalkthrough({ kind, onCustomize, onOpenDrawio }) {
   const [question, setQuestion] = useState(0);
   const [message, setMessage] = useState('');
   const questionNav = useRef(null);
@@ -45,6 +45,7 @@ export default function PeWalkthrough({ kind, onCustomize }) {
     {source.images && <details className="pe-full-question pe-original-images"><summary>Xem 4 ảnh đề gốc trong de_chua_giai</summary><p>Bấm ảnh để mở lớn. Nội dung đề bên dưới được chép lại từ chính các ảnh này.</p><div className="pe-source-images">{source.images.map((path, index) => <a href={`${import.meta.env.BASE_URL}${path}`} key={path} target="_blank" rel="noreferrer"><span>{index === 0 ? 'Business Overview' : `Question ${index}`}</span><img src={`${import.meta.env.BASE_URL}${path}`} alt={index === 0 ? 'Ảnh Business Overview StayEase' : `Ảnh đề StayEase câu ${index}`} loading="lazy"/></a>)}</div></details>}
     <div ref={questionNav} className="pe-question-tabs" aria-label="Chọn câu để học">{names.map((name, i) => <button key={i} className={question === i ? 'active' : ''} aria-pressed={question === i} onClick={() => chooseQuestion(i)}><span>Câu {i + 1} · {i === 1 ? 4 : 3} điểm</span><strong>{name} Diagram</strong></button>)}</div>
     <div className="pe-lesson-task"><div><span className="eyebrow">ĐANG LÀM CÂU {question + 1}</span><h2>{question === 0 ? 'Lấy danh từ, quan hệ và số lượng → dựng Class' : question === 1 ? `${c.usecase} → dựng luồng gọi và alt` : `${c.returnCase} → ${c.third === 'State' ? 'dựng vòng đời Appointment' : 'chia làn, rẽ nhánh, hoàn tất giao dịch'}`}</h2><p>{steps.length} bước giải thích bên dưới. Ví dụ method và giả định là gợi ý thiết kế, không phải nội dung nguyên văn.</p></div><button className="btn" onClick={download}>Tải mẫu câu {question + 1} .drawio ↓</button></div>
+    {onOpenDrawio && <div className="dg-guide-link"><p><b>Chưa biết dùng hình nào hoặc nối ra sao?</b> Xem danh sách hình và các thao tác để hoàn thành câu {question + 1}.</p><button className="btn secondary" onClick={() => onOpenDrawio(question)}>Cách vẽ Q{question + 1} trong draw.io →</button></div>}
     <details className="pe-full-question"><summary>Đọc toàn bộ nguyên văn câu {question + 1}</summary><h3>{original.title}</h3><div>{original.text}</div><p>Nguồn: {source.source}</p></details>
     <div className="pe-lesson-columns" aria-hidden="true"><span>ĐỀ NÓI GÌ?</span><span>HIỂU VÀ LÀM NHƯ THẾ NÀO?</span></div>
     <div className="pe-lesson-steps">{steps.map((step, i) => <article className="pe-lesson-step" key={`${kind}-${question}-${i}`}>

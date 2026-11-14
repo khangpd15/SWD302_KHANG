@@ -32,6 +32,8 @@ npm run preview
 
 ## Tính năng
 
+- **Cách dùng draw.io**: hướng dẫn chuẩn bị thư viện, hình cần dùng cho Q1/Q2/Q3, các bước kéo/nối/đặt nhãn, hình minh họa ký hiệu UML, bảng kiểu connector và checklist tự kiểm. Hỗ trợ Activity hoặc State theo đề đang chọn; từ mỗi câu có nút mở thẳng hướng dẫn tương ứng. Bản StayEase offline tại `public/guides/stayease-drawio-guide.md`, sinh cùng build từ nội dung `src/drawio-guide.js`.
+
 - **StayEase** từ 4 ảnh trong `de_chua_giai` là đề mặc định của trang PE. Có ảnh gốc, bản chép đề, 14 bước hướng dẫn và `.drawio` lời giải riêng cho Q1–Q3. Q2 thu cọc thành công trước khi tạo Reservation; Q3 kết thúc với Room=`Cleaning`. Generator riêng ở `src/stayease-diagrams.js`; nội dung nguồn và phân tích tại `src/stayease-data.js`. Không suy diễn thời gian/cách nộp từ ảnh thiếu phần đầu đề.
 
 - Trang **Thi PE** tại `#pe`: phân tích format SWD392 SP26, quy trình chia 85 phút, 12 nhóm keyword có tìm không dấu và bộ dò theo nội dung đề.

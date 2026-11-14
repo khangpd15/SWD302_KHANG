@@ -3,14 +3,16 @@ import { cases, keywordRules, matchKeywords, normalize, checklist } from './pe-d
 import { downloadDrawio } from './pe-diagrams';
 import './pe.css';
 import PeWalkthrough from './PeWalkthrough';
+import DrawioGuide from './DrawioGuide';
 
-const tabs = [['lesson', '01', 'Học ngay trên đề'], ['guide', '02', 'Format & lộ trình'], ['keywords', '03', 'Tra keyword'], ['builder', '04', 'Đổi tên & tải mẫu'], ['templates', '05', 'Kho .drawio'], ['check', '06', 'Soát bài']];
+const tabs = [['lesson', '01', 'Học ngay trên đề'], ['drawio', '02', 'Cách dùng draw.io'], ['guide', '03', 'Format & lộ trình'], ['keywords', '04', 'Tra keyword'], ['builder', '05', 'Đổi tên & tải mẫu'], ['templates', '06', 'Kho .drawio'], ['check', '07', 'Soát bài']];
 const fields = [['system', 'Tên hệ thống', 'AutoGo'], ['actor', 'Người dùng chính', 'Customer'], ['staff', 'Vai trò xử lý', 'Staff'], ['resource', 'Tài nguyên', 'Car'], ['record', 'Giao dịch chính', 'Booking'], ['payment', 'Khoản tiền / phạt', 'Payment']];
 function KeywordCard({ rule }) {
   return <article className="pe-card pe-keyword"><span className="pe-badge">{rule.diagram}</span><h3>{rule.title}</h3><div className="pe-tags">{rule.terms.map(term => <code key={term}>{term}</code>)}</div><p>{rule.action}</p><div className="pe-example">{rule.example}</div></article>;
 }
 export default function PePage() {
   const [tab, setTab] = useState('lesson');
+  const [drawioStage, setDrawioStage] = useState('setup');
   const [kind, setKind] = useState('stayease');
   const [config, setConfig] = useState({ ...cases.stayease });
   const [search, setSearch] = useState('');
@@ -29,7 +31,8 @@ export default function PePage() {
     <nav className="pe-tabs" aria-label="Các phần ôn PE">{tabs.map(([key, n, title]) => <button key={key} className={tab === key ? 'active' : ''} aria-current={tab === key ? 'page' : undefined} onClick={() => { setTab(key);setMessage(''); }}><span>{n}</span>{title}</button>)}</nav>
     <div className="pe-case-bar"><label htmlFor="pe-case">Tình huống đang xem</label><select id="pe-case" value={kind} onChange={e => chooseCase(e.target.value)}>{Object.entries(cases).map(([key, c]) => <option key={key} value={key}>{c.title}</option>)}</select><span className="pe-badge">{selected.tag}</span></div>
 
-    {tab === 'lesson' && <PeWalkthrough key={kind} kind={kind} onCustomize={() => setTab('builder')}/>}
+    {tab === 'lesson' && <PeWalkthrough key={kind} kind={kind} onCustomize={() => setTab('builder')} onOpenDrawio={question => { setDrawioStage(`q${question + 1}`);setTab('drawio'); }}/>}
+    {tab === 'drawio' && <DrawioGuide kind={kind} config={selected} stage={drawioStage} onStage={setDrawioStage}/>}
 
     {tab === 'guide' && <section aria-label="Format và cách phân tích đề">{selected.formatNote && <p className="pe-alert">{selected.formatNote}</p>}
       <div className="pe-metrics">{[[selected.durationLabel || '85 phút', 'Thời gian trong đề'], ['3 điểm', 'Q1 · Design-level Class'], ['4 điểm', 'Q2 · Sequence'], ['3 điểm', `Q3 · ${selected.third}`]].map(([value, label]) => <div className="pe-card" key={label}><b>{value}</b><span>{label}</span></div>)}</div>
