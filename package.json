@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "start": "vite --host 127.0.0.1",
-    "build": "vite build",
+    "build": "node scripts/generate-pe-templates.mjs && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node tests.mjs"
+    "test": "node tests.mjs && node tests-pe.mjs"
   },
   "dependencies": { "react": "^19.0.0", "react-dom": "^19.0.0" },
   "devDependencies": { "@vitejs/plugin-react": "^5.0.0", "vite": "^7.0.0" }

@@ -32,6 +32,11 @@ npm run preview
 
 ## Tính năng
 
+- Trang **Thi PE** tại `#pe`: phân tích format SWD392 SP26, quy trình chia 85 phút, 12 nhóm keyword có tìm không dấu và bộ dò theo nội dung đề.
+- Ba tình huống AutoGo, FPT Library, MediCare; điền 6 tên nghiệp vụ để xuất đồng bộ kiến trúc + Class + Sequence + Activity/State dưới dạng `.drawio`, hoặc tải riêng từng câu.
+- `public/templates/` giữ hai `.drawio` gốc và ba bộ tự biên soạn. Bộ tự biên soạn được tái tạo khi build bằng `scripts/generate-pe-templates.mjs`; logic xuất file tại `src/pe-diagrams.js`, nguồn phân tích tại `src/pe-data.js`. Mẫu cần đối chiếu yêu cầu và sửa nghiệp vụ trước khi sử dụng; không phải rubric chấm điểm.
+- Đề PE nguồn cấm Internet và yêu cầu Word/archive khi nộp: tải mẫu và chuẩn bị draw.io Desktop trước giờ thi theo quy định. `.drawio` là nguồn chỉnh sửa.
+
 - 202 câu, 4 đáp án mỗi câu, mẹo tiếng Việt cho từng câu.
 - 20 mã đề ngẫu nhiên lưu riêng trên mỗi trình duyệt; mỗi mã 60 câu khác nhau, đủ 20 chương. Các mã có thể trùng câu với nhau. Bộ 20 đề bao phủ toàn bộ ngân hàng.
 - Tạo lại bộ đề; thời gian 45/60/90 phút hoặc không giới hạn; nộp tự động khi hết giờ. Đồng hồ tiếp tục chạy khi rời trang.

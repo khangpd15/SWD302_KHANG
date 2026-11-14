@@ -44,7 +44,7 @@ const vite=await createServer({server:{middlewareMode:true},appType:'custom',opt
 globalThis.window={location:{hash:'#home'}};
 try {
  const {default:App}=await vite.ssrLoadModule('/src/App.jsx');
- for(const [route,expected] of [['home','Sẵn sàng chinh phục SWD301?'],['exams','20 mã đề. 20 lần vững hơn.'],['bank','Ngân hàng 202 câu hỏi.'],['tips','Bắt từ khóa. Nắm ý chính.'],['saved','Những câu bạn muốn nhớ.'],['history','Mỗi lần luyện, một chút tiến bộ.']]){
+ for(const [route,expected] of [['home','Sẵn sàng chinh phục SWD301?'],['exams','20 mã đề. 20 lần vững hơn.'],['pe','Thi PE. Đọc đề, bắt ý, dựng hình.'],['bank','Ngân hàng 202 câu hỏi.'],['tips','Bắt từ khóa. Nắm ý chính.'],['saved','Những câu bạn muốn nhớ.'],['history','Mỗi lần luyện, một chút tiến bộ.']]){
   window.location.hash='#'+route;
   const html=renderToString(createElement(App));assert.ok(html.includes(expected),`React page ${route}`);
  }
@@ -53,5 +53,5 @@ try {
  const entry={...session,...score(ids,session.answers,questions),endedAt:Date.now()};
  stored.set('swd-study-v1-history',JSON.stringify([entry]));window.location.hash='#result';
  assert.ok(renderToString(createElement(App)).includes('Kết quả mã đề 01'));
- console.log('PASS: React server render for all 8 routes, restored quiz and history, exam hides feedback.');
+ console.log('PASS: React server render for all 9 routes, restored quiz and history, exam hides feedback.');
 }finally{await vite.close();delete globalThis.window;delete globalThis.localStorage;}

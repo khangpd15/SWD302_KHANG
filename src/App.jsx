@@ -2,11 +2,12 @@ import React, { createContext, useContext, useEffect, useRef, useState } from 'r
 import { questions, chapters, questionMap, tipFor, chapterTitle, filterQuestions } from './data';
 import { generate, score } from './engine';
 import { load, persist, validSession } from './storage';
+import PePage from './PePage';
 
 const StudyContext = createContext(null);
 const useStudy = () => useContext(StudyContext);
 const navItems = [
-  ['home', 'home', 'Tổng quan'], ['exams', 'exam', 'Luyện đề'], ['bank', 'book', 'Ngân hàng câu hỏi'],
+  ['home', 'home', 'Tổng quan'], ['exams', 'exam', 'Luyện đề'], ['pe', 'shuffle', 'Thi PE'], ['bank', 'book', 'Ngân hàng câu hỏi'],
   ['tips', 'bulb', 'Mẹo ghi nhớ'], ['saved', 'bookmark', 'Câu đã lưu'], ['history', 'history', 'Lịch sử làm bài'],
 ];
 const paths = {
@@ -143,7 +144,7 @@ function useStoredState(key, fallback, validate, onFailure) {
 }
 const getRoute = () => {
   const route = window.location.hash.slice(1);
-  return ['home', 'exams', 'bank', 'tips', 'saved', 'history', 'quiz', 'result'].includes(route) ? route : 'home';
+  return ['home', 'exams', 'pe', 'bank', 'tips', 'saved', 'history', 'quiz', 'result'].includes(route) ? route : 'home';
 };
 const validSets = sets => Array.isArray(sets) && sets.length === 20 && new Set(sets.map(s => s.code)).size === 20 && sets.every(s =>
   Array.isArray(s.ids) && s.ids.length === 60 && new Set(s.ids).size === 60 && s.ids.every(id => questionMap.has(id)));
@@ -252,7 +253,7 @@ export default function App() {
   }, [route, session, modal]);
 
   const context = { sets, bookmarks, history, mastery, session, modal, selectedResult, bankFilter, setBankFilter, setModal, navigate, notify, begin, practice, finish, chooseAnswer, move, toggleFlag, toggleBookmark, viewResult, regenerate };
-  const pages = { home: <Home />, exams: <Exams />, bank: <Bank />, tips: <Tips />, saved: <Bank saved />, history: <History />, quiz: <Quiz />, result: <Result key={selectedResult?.id || history[0]?.id || 'empty'} /> };
+  const pages = { home: <Home />, exams: <Exams />, pe: <PePage />, bank: <Bank />, tips: <Tips />, saved: <Bank saved />, history: <History />, quiz: <Quiz />, result: <Result key={selectedResult?.id || history[0]?.id || 'empty'} /> };
   const pageName = navItems.find(item => item[0] === route)?.[2] || (route === 'quiz' ? 'Đang làm bài' : 'Kết quả');
-  return <StudyContext.Provider value={context}><div className="shell"><aside className="sidebar"><a className="brand" href="#home" aria-label="SWD Study — Tổng quan"><span className="brand-icon">s<span>↗</span></span><span>SWD<span className="brand-light">study</span><small>SOFTWARE MODELING & DESIGN</small></span></a><div className="side-label">GÓC HỌC TẬP CỦA BẠN</div><nav aria-label="Điều hướng chính">{navItems.map(([key, icon, label]) => <a key={key} href={`#${key}`} aria-label={label} className={`nav-item ${route === key ? 'active' : ''}`} aria-current={route === key ? 'page' : undefined}><Icon name={icon} /><span>{label}</span>{key === 'exams' && <span className="count">20</span>}</a>)}</nav><div className="sidebar-bottom"><div className="tiny-spark">✦</div><strong>Hiểu từ khóa.<br />Nhớ lâu hơn.</strong><p>Mỗi câu hỏi, một mẹo nhỏ.<br />Từng chút một, bạn sẽ vững hơn.</p><span className="course-pill">SWD301 · 20 chương</span></div><div className="local-note"><span className="dot" /> Tiến độ lưu trên trình duyệt này</div></aside><div className="workspace"><header className="topbar"><span>Không gian ôn tập <span>/</span> {pageName}</span><div className="topbar-right"><span className="subject-tag">SWD301</span><span className="avatar">S</span></div></header><main tabIndex={-1}>{storageWarning && <div className="source-note" role="status">Trình duyệt không cho lưu dữ liệu. Tiến độ chỉ giữ trong phiên này.</div>}{pages[route]}</main><footer>SWD Study <span>·</span> Học có hệ thống, thi tự tin hơn.<span className="footer-right">Dựa trên tài liệu Software Modeling and Design</span></footer></div></div><Modal /><div id="toast" className={toast ? 'show' : ''} role="status" aria-live="polite">{toast?.text}</div></StudyContext.Provider>;
+  return <StudyContext.Provider value={context}><div className="shell"><aside className="sidebar"><a className="brand" href="#home" aria-label="SWD Study — Tổng quan"><span className="brand-icon">s<span>↗</span></span><span>SWD<span className="brand-light">study</span><small>SOFTWARE MODELING & DESIGN</small></span></a><div className="side-label">GÓC HỌC TẬP CỦA BẠN</div><nav aria-label="Điều hướng chính">{navItems.map(([key, icon, label]) => <a key={key} href={`#${key}`} aria-label={label} className={`nav-item ${route === key ? 'active' : ''}`} aria-current={route === key ? 'page' : undefined}><Icon name={icon} /><span>{label}</span>{key === 'exams' && <span className="count">20</span>}</a>)}</nav><div className="sidebar-bottom"><div className="tiny-spark">✦</div><strong>Hiểu từ khóa.<br />Nhớ lâu hơn.</strong><p>Mỗi câu hỏi, một mẹo nhỏ.<br />Từng chút một, bạn sẽ vững hơn.</p><span className="course-pill">SWD301 · 20 chương</span></div><div className="local-note"><span className="dot" /> Tiến độ lưu trên trình duyệt này</div></aside><div className="workspace"><header className="topbar"><span>Không gian ôn tập <span>/</span> {pageName}</span><div className="topbar-right"><span className="subject-tag">{route === 'pe' ? 'SWD392 · PE' : 'SWD301'}</span><span className="avatar">S</span></div></header><main tabIndex={-1}>{storageWarning && <div className="source-note" role="status">Trình duyệt không cho lưu dữ liệu. Tiến độ chỉ giữ trong phiên này.</div>}{pages[route]}</main><footer>SWD Study <span>·</span> Học có hệ thống, thi tự tin hơn.<span className="footer-right">Dựa trên tài liệu Software Modeling and Design</span></footer></div></div><Modal /><div id="toast" className={toast ? 'show' : ''} role="status" aria-live="polite">{toast?.text}</div></StudyContext.Provider>;
 }
