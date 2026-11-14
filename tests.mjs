@@ -50,6 +50,7 @@ try {
  for (const kind of ['stayease','medicare']) for (const stage of ['setup','q1','q2','q3','export']) {
   const html=renderToString(createElement(DrawioGuide,{kind,config:cases[kind],stage,onStage:()=>{}}));
   assert.ok(html.includes('Cần dùng để hoàn thành') && html.includes('Khi nào phần này được xem là hoàn thành?'));
+  if (['q1','q2','q3'].includes(stage)) assert.ok(html.includes('Hướng dẫn phân tích và điền nội dung') && html.includes('Phần B · Thao tác trên draw.io'));
   if (stage==='q3') assert.ok(html.includes(kind==='stayease' ? 'Room=Cleaning' : 'Ít nhất 6 transitions có event.'));
  }
  for (const kind of ['stayease', 'autogo', 'library', 'medicare']) {

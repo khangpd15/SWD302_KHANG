@@ -32,6 +32,9 @@ npm run preview
 
 ## Tính năng
 
+- Bổ sung **hướng dẫn phân tích bằng chữ cho từng Q** trong Cách dùng draw.io: tìm class và method từ đoạn đề, đọc multiplicity hai chiều, phân biệt loại quan hệ, suy ra repository/service, viết luồng trước khi vẽ Sequence, tách alt, phân lane và kiểm tra trạng thái cuối. Có State riêng cho MediCare và đoạn giải thích ngắn tham khảo. Bản tải offline: `public/guides/phuong-phap-3q.md`; nội dung tại `src/pe-method.js`.
+
+
 - **Cách dùng draw.io**: hướng dẫn chuẩn bị thư viện, hình cần dùng cho Q1/Q2/Q3, các bước kéo/nối/đặt nhãn, hình minh họa ký hiệu UML, bảng kiểu connector và checklist tự kiểm. Hỗ trợ Activity hoặc State theo đề đang chọn; từ mỗi câu có nút mở thẳng hướng dẫn tương ứng. Bản StayEase offline tại `public/guides/stayease-drawio-guide.md`, sinh cùng build từ nội dung `src/drawio-guide.js`.
 
 - **StayEase** từ 4 ảnh trong `de_chua_giai` là đề mặc định của trang PE. Có ảnh gốc, bản chép đề, 14 bước hướng dẫn và `.drawio` lời giải riêng cho Q1–Q3. Q2 thu cọc thành công trước khi tạo Reservation; Q3 kết thúc với Room=`Cleaning`. Generator riêng ở `src/stayease-diagrams.js`; nội dung nguồn và phân tích tại `src/stayease-data.js`. Không suy diễn thời gian/cách nộp từ ảnh thiếu phần đầu đề.

@@ -14,6 +14,7 @@ export const connectorGuide = [
   { id: 'inheritance', title: 'Kế thừa / Generalization', line: 'Liền', ends: 'Tam giác rỗng ở lớp cha', direction: 'Bắt đầu ở lớp con → kết thúc ở User.', style: 'endArrow=block;endFill=0;startArrow=none;dashed=0;', example: 'Customer → User; Host → User' },
   { id: 'realization', title: 'Implements / Realization', line: 'Đứt', ends: 'Tam giác rỗng ở interface', direction: 'Concrete Repository → interface nó thực hiện.', style: 'endArrow=block;endFill=0;startArrow=none;dashed=1;', example: 'RoomRepository → IRoomRepository' },
   { id: 'composition', title: 'Composition', line: 'Liền', ends: 'Thoi đặc ở đối tượng whole', direction: 'Kéo từ Reservation tới Payment: thoi ở đầu Start / Source.', style: 'startArrow=diamond;startFill=1;endArrow=none;dashed=0;', example: 'Reservation 1 ◆— 1..* Payment' },
+  { id: 'aggregation', title: 'Aggregation', line: 'Liền', ends: 'Thoi rỗng ở đối tượng whole', direction: 'Part tồn tại độc lập khi whole mất; chỉ dùng khi quan hệ whole–part và giả định vòng đời phù hợp.', style: 'startArrow=diamond;startFill=0;endArrow=none;dashed=0;', example: 'Department ◇— Employee (nhân viên tồn tại độc lập)' },
   { id: 'dependency', title: 'Dependency / uses', line: 'Đứt', ends: 'Đầu mũi tên mở ở đối tượng được dùng', direction: 'Service → repository interface; không dùng tam giác rỗng.', style: 'endArrow=open;endFill=0;startArrow=none;dashed=1;', example: 'BookingService → IRoomRepository' },
 ];
 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { cases, keywordRules, matchKeywords, normalize, checklist } from './pe-data';
 import { downloadDrawio } from './pe-diagrams';
 import './pe.css';
 import PeWalkthrough from './PeWalkthrough';
-import DrawioGuide from './DrawioGuide';
+import './drawio-guide.css';
+const DrawioGuide = lazy(() => import('./DrawioGuide'));
 
 const tabs = [['lesson', '01', 'Học ngay trên đề'], ['drawio', '02', 'Cách dùng draw.io'], ['guide', '03', 'Format & lộ trình'], ['keywords', '04', 'Tra keyword'], ['builder', '05', 'Đổi tên & tải mẫu'], ['templates', '06', 'Kho .drawio'], ['check', '07', 'Soát bài']];
 const fields = [['system', 'Tên hệ thống', 'AutoGo'], ['actor', 'Người dùng chính', 'Customer'], ['staff', 'Vai trò xử lý', 'Staff'], ['resource', 'Tài nguyên', 'Car'], ['record', 'Giao dịch chính', 'Booking'], ['payment', 'Khoản tiền / phạt', 'Payment']];
@@ -32,7 +33,7 @@ export default function PePage() {
     <div className="pe-case-bar"><label htmlFor="pe-case">Tình huống đang xem</label><select id="pe-case" value={kind} onChange={e => chooseCase(e.target.value)}>{Object.entries(cases).map(([key, c]) => <option key={key} value={key}>{c.title}</option>)}</select><span className="pe-badge">{selected.tag}</span></div>
 
     {tab === 'lesson' && <PeWalkthrough key={kind} kind={kind} onCustomize={() => setTab('builder')} onOpenDrawio={question => { setDrawioStage(`q${question + 1}`);setTab('drawio'); }}/>}
-    {tab === 'drawio' && <DrawioGuide kind={kind} config={selected} stage={drawioStage} onStage={setDrawioStage}/>}
+    {tab === 'drawio' && <Suspense fallback={<p role="status">Đang mở hướng dẫn…</p>}><DrawioGuide kind={kind} config={selected} stage={drawioStage} onStage={setDrawioStage}/></Suspense>}
 
     {tab === 'guide' && <section aria-label="Format và cách phân tích đề">{selected.formatNote && <p className="pe-alert">{selected.formatNote}</p>}
       <div className="pe-metrics">{[[selected.durationLabel || '85 phút', 'Thời gian trong đề'], ['3 điểm', 'Q1 · Design-level Class'], ['4 điểm', 'Q2 · Sequence'], ['3 điểm', `Q3 · ${selected.third}`]].map(([value, label]) => <div className="pe-card" key={label}><b>{value}</b><span>{label}</span></div>)}</div>

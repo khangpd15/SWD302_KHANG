@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { connectorGuide, drawioGuide, drawioSources } from './drawio-guide';
 import { downloadDrawio } from './pe-diagrams';
+import { methodGuide, explanationDraft } from './pe-method';
 import './drawio-guide.css';
 
 function ConnectorSketch({ item }) {
   const triangle = ['inheritance', 'realization'].includes(item.id);
-  return <svg viewBox="0 0 180 70" role="img" aria-label={`${item.title}: nét ${item.line.toLowerCase()}, ${item.ends}`}><g fill="none" stroke="#6551ce" strokeWidth="2"><path d={item.id === 'composition' ? 'M42 30H154' : 'M24 30H154'} strokeDasharray={['realization','dependency'].includes(item.id) ? '6 4' : undefined}/>{triangle && <path d="m154 30-19-10v20Z" fill="white"/>}{item.id === 'dependency' && <path d="m141 20 14 10-14 10"/>}{item.id === 'composition' && <path d="m18 30 12-9 12 9-12 9Z" fill="#6551ce"/>}</g><g fontSize="10" fill="#8b7c9d"><text x="12" y="59">Nguồn</text><text x="127" y="59">Đích</text></g></svg>;
+  return <svg viewBox="0 0 180 70" role="img" aria-label={`${item.title}: nét ${item.line.toLowerCase()}, ${item.ends}`}><g fill="none" stroke="#6551ce" strokeWidth="2"><path d={['composition','aggregation'].includes(item.id) ? 'M42 30H154' : 'M24 30H154'} strokeDasharray={['realization','dependency'].includes(item.id) ? '6 4' : undefined}/>{triangle && <path d="m154 30-19-10v20Z" fill="white"/>}{item.id === 'dependency' && <path d="m141 20 14 10-14 10"/>}{['composition','aggregation'].includes(item.id) && <path d="m18 30 12-9 12 9-12 9Z" fill={item.id === 'composition' ? '#6551ce' : 'white'}/>}</g><g fontSize="10" fill="#8b7c9d"><text x="12" y="59">Nguồn</text><text x="127" y="59">Đích</text></g></svg>;
 }
 
 function ShapeSketch({ type, label }) {
@@ -30,6 +31,7 @@ export default function DrawioGuide({ kind, config, stage, onStage }) {
   useEffect(() => { stageNav.current?.scrollIntoView({ behavior: 'auto', block: 'start' }); }, [kind, stage]);
   const guide = drawioGuide(config, kind);
   const current = guide[stage] || guide.setup;
+  const method = methodGuide(config, kind, stage);
   const isQuestion = ['q1','q2','q3'].includes(stage);
   const stages = [['setup','Bắt đầu'], ['q1','Q1 · Class'], ['q2','Q2 · Sequence'], ['q3',`Q3 · ${config.third}`], ['export','Lưu & xuất bài']];
   const symbols = stage === 'q1' ? [['class','Class / Interface']] : stage === 'q2' ? [['lifeline','Lifeline'],['activation','Activation'],['frame','alt fragment']] : stage === 'q3' && config.third === 'State' ? [['state','State'],['initial','Initial'],['final','Final']] : stage === 'q3' ? [['swimlane','Swimlane'],['action','Action'],['decision','Decision / Merge'],['initial','Initial'],['final','Activity Final']] : [];
@@ -40,6 +42,8 @@ export default function DrawioGuide({ kind, config, stage, onStage }) {
     <div className="dg-intro"><div><div className="eyebrow">CẦM TAY CHỈ VIỆC · DRAW.IO</div><h2>Cần hình gì? Bấm ở đâu? Làm sao biết đã xong?</h2><p>Đang áp dụng cho <b>{config.title}</b>. Có thể sửa mẫu có sẵn hoặc vẽ từ trang trắng; đọc phần Bắt đầu trước nếu mới dùng.</p></div><a className="btn secondary" href={`${import.meta.env.BASE_URL}guides/stayease-drawio-guide.md`} download>Tải hướng dẫn StayEase offline ↓</a></div>
     <nav ref={stageNav} className="dg-stages" aria-label="Các bước học draw.io">{stages.map(([key,title]) => <button key={key} className={stage === key ? 'active' : ''} aria-current={stage === key ? 'step' : undefined} onClick={() => {onStage(key);setMessage('');}}>{title}</button>)}</nav>
     <div className="dg-stage-title"><div><h2>{current.title}</h2><p>{current.goal}</p></div><button className="btn" onClick={download}>{isQuestion ? `Tải mẫu Q${stage.slice(1)}` : 'Tải cả bộ'} .drawio ↓</button></div>
+    {method && <section className="pe-card dg-method" aria-label="Hướng dẫn phân tích và điền nội dung"><div className="eyebrow">PHẦN A · ĐỌC ĐỀ VÀ ĐIỀN NỘI DUNG</div><h3>{method.title}</h3><p>{method.intro}</p>{method.steps.map(step => <article key={step.title}><h4>{step.title}</h4><ol>{step.text.map(text => <li key={text}>{text}</li>)}</ol><pre>{step.example}</pre></article>)}<details><summary>Nếu cần viết giải thích ngắn dưới hình</summary><p>Chỉ dùng khi khớp với diagram của bạn và yêu cầu đề. Sửa lại nếu chọn giả định khác; ưu tiên hoàn thành hình trước, không coi đoạn mẫu là bảo đảm điểm.</p><blockquote>{explanationDraft(kind,config,stage)}</blockquote></details><a className="text-link" href={`${import.meta.env.BASE_URL}guides/phuong-phap-3q.md`} download>Tải hướng dẫn phân tích 3Q StayEase bằng chữ ↓</a></section>}
+    {method && <h3 className="dg-section-label">Phần B · Thao tác trên draw.io</h3>}
     <article className="pe-card dg-kit"><h3>Chuẩn bị những gì cho phần này?</h3><div className="dg-table-scroll"><table><thead><tr><th>Thành phần</th><th>Cần dùng để hoàn thành</th></tr></thead><tbody>{current.inventory.map(([name,desc]) => <tr key={name}><th scope="row">{name}</th><td>{desc}</td></tr>)}</tbody></table></div></article>
     {symbols.length > 0 && <div className="dg-symbols" aria-label="Nhận diện các hình UML">{symbols.map(([type,label]) => <ShapeSketch key={type} type={type} label={label}/>)}</div>}
     <div className="dg-task-list">{current.tasks.map(task => <article className="pe-card dg-task" key={task.title}><h3>{task.title}</h3><ol>{task.actions.map(action => <li key={action}>{action}</li>)}</ol><div className="pe-result"><span>LÀM XONG SẼ CÓ</span><pre>{task.result}</pre></div><p className="dg-mistake"><b>Nếu bị vướng:</b> {task.mistake}</p></article>)}</div>
