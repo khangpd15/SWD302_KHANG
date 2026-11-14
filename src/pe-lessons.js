@@ -5,7 +5,9 @@ const repository = (quote, record, resource, payment) => step('Thêm tầng Serv
   `Tạo ${record}Service. Nối dependency nét đứt + đầu mũi tên mở từ Service tới các Repository mà nó gọi. Đặt method xử lý nghiệp vụ ở Service; không đặt xử lý thanh toán trong Repository.`,
 ], `${record}Service - - > ${record}Repository\n${record}Repository - - ▷ Repository<T>\n+ findById(id: Long): T\n+ save(entity: T): T`, 'Đề mới có Order thì dùng OrderService / OrderRepository; method thay theo hành động trong use case.', 'Kế thừa class dùng nét liền. Implements interface dùng nét đứt. Cả hai tam giác đều hướng về cha/interface.');
 
+import { stayeaseLessons } from './stayease-data.js';
 export const lessons = {
+  stayease: stayeaseLessons,
   autogo: [
     [
       step('Tìm lớp cha và lớp con', 'The classes Customer and Staff are specialized types of User and must inherit from it.', ['Customer', 'Staff', 'specialized types', 'User', 'inherit'], 'Customer và Staff đều là một loại User. Tạo 3 lớp, dùng quan hệ kế thừa, không dùng đường association thông thường.', ['Kéo 3 hình Class, đặt tên User, Customer, Staff.', 'User giữ thuộc tính chung: - id: Long, - name: String, - email: String. Customer có + createBooking(...): Booking; Staff có + inspectCar(...): void.', 'Nối Customer → User và Staff → User bằng nét liền, đầu tam giác rỗng ở phía User. Trong phần Style của đường nối, chọn đầu kết thúc tam giác và bỏ tô màu.'], 'Customer ──▷ User ◁── Staff', 'Tìm cụm “specialized types / inherit / is a” trong đề mới. Thay Customer và Staff bằng các vai trò mới; giữ cách nối về lớp cha.', 'Không gom Customer và Staff thành một thuộc tính role rồi bỏ hai lớp con: đề đã yêu cầu rõ hai lớp kế thừa.'),

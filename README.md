@@ -32,6 +32,8 @@ npm run preview
 
 ## Tính năng
 
+- **StayEase** từ 4 ảnh trong `de_chua_giai` là đề mặc định của trang PE. Có ảnh gốc, bản chép đề, 14 bước hướng dẫn và `.drawio` lời giải riêng cho Q1–Q3. Q2 thu cọc thành công trước khi tạo Reservation; Q3 kết thúc với Room=`Cleaning`. Generator riêng ở `src/stayease-diagrams.js`; nội dung nguồn và phân tích tại `src/stayease-data.js`. Không suy diễn thời gian/cách nộp từ ảnh thiếu phần đầu đề.
+
 - Trang **Thi PE** tại `#pe`: phân tích format SWD392 SP26, quy trình chia 85 phút, 12 nhóm keyword có tìm không dấu và bộ dò theo nội dung đề.
 - Mở trang PE vào ngay **Học ngay trên đề**: có Business Overview nguyên văn, ba câu hỏi của từng đề, câu trích tô keyword và hướng dẫn từng bước đặt class, nối quan hệ, ghi method, alt, swimlane và state. Mỗi bước có kết quả mẫu, cách áp dụng đề khác và lỗi dễ sai; tải `.drawio` ngay tại câu đang học. `src/data/pe-exams.json` lưu văn bản đề, `src/pe-lessons.js` lưu phần giải thích tự biên soạn.
 - Ba tình huống AutoGo, FPT Library, MediCare; điền 6 tên nghiệp vụ để xuất đồng bộ kiến trúc + Class + Sequence + Activity/State dưới dạng `.drawio`, hoặc tải riêng từng câu.

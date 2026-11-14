@@ -3,8 +3,10 @@ import { readFile } from 'node:fs/promises';
 import { cases, matchKeywords } from './src/pe-data.js';
 import { buildDrawio } from './src/pe-diagrams.js';
 import { lessons } from './src/pe-lessons.js';
+import { stayeaseExam } from './src/stayease-data.js';
 
 const exams = JSON.parse(await readFile(new URL('./src/data/pe-exams.json', import.meta.url), 'utf8'));
+exams.stayease = stayeaseExam;
 for (const kind of Object.keys(cases)) {
   assert.equal(lessons[kind].length, 3);
   for (const [index, steps] of lessons[kind].entries()) {
@@ -24,16 +26,27 @@ for (const [kind, config] of Object.entries(cases)) {
   const xml = buildDrawio(config, kind);
   assert.equal((xml.match(/<diagram /g) || []).length, 4);
   assert.ok(xml.includes('Repository&amp;lt;T&amp;gt;'));
-  assert.ok(xml.includes(kind === 'library' ? 'countActiveLoans' : 'payment failure'));
+  assert.ok(kind === 'library' ? xml.includes('countActiveLoans') : /payment failure/i.test(xml));
   assert.ok(xml.includes(kind === 'medicare' ? 'payFail / releaseSlot' : 'Level 2'));
   assert.equal(await readFile(new URL(`./public/templates/${kind}_PE.drawio`, import.meta.url), 'utf8'), xml, 'Static download matches current generator');
   for (const only of ['architecture', 'class', 'sequence', 'third']) {
     assert.equal((buildDrawio(config, kind, only).match(/<diagram /g) || []).length, 1);
   }
   const changed = buildDrawio({ ...config, actor: 'Buyer', record: 'Order', resource: 'Product', system: 'Shop', payment: 'Receipt', staff: 'Seller' }, kind);
-  for (const token of ['Buyer', 'OrderService', 'ProductRepository', 'ReceiptRepository', 'Shop']) assert.ok(changed.includes(token));
+  for (const token of ['Buyer', kind === 'stayease' ? 'BookingService' : 'OrderService', 'ProductRepository', 'ReceiptRepository', 'Shop']) assert.ok(changed.includes(token));
 }
 const escaped = buildDrawio({ ...cases.autogo, system: '<img src=x onerror="test"> & <diagram id="injected">' }, 'autogo');
 assert.ok(!escaped.includes('<img'));
 assert.equal((escaped.match(/<diagram /g) || []).length, 4, 'User labels cannot inject XML nodes');
-console.log('PASS: PE keyword matching, 3 domain exports, individual pages, rename propagation, XML escaping, static template freshness.');
+const staySequence = buildDrawio(cases.stayease, 'stayease', 'sequence');
+assert.ok(staySequence.indexOf('processDeposit') < staySequence.indexOf('«create»'), 'StayEase only creates Reservation after payment');
+assert.ok(staySequence.indexOf('payment Success') < staySequence.indexOf('«create»'));
+assert.ok(staySequence.indexOf('«create»') < staySequence.indexOf('updateStatus(roomId, Booked)'));
+const failure = staySequence.slice(staySequence.indexOf('[payment Failure]'), staySequence.indexOf('[Occupied /'));
+assert.ok(!failure.includes('«create»') && failure.includes('showPaymentError'));
+const stayActivity = buildDrawio(cases.stayease, 'stayease', 'third');
+assert.ok(stayActivity.includes('Completed') && stayActivity.includes('Cleaning') && stayActivity.includes('Damage Fee'));
+for (const only of ['class', 'sequence', 'third']) {
+  assert.equal(await readFile(new URL(`./public/templates/stayease_${only}.drawio`, import.meta.url), 'utf8'), buildDrawio(cases.stayease, 'stayease', only));
+}
+console.log('PASS: quoted lessons, PE keywords, 4 domain exports, StayEase payment-before-create, final statuses, individual pages, renaming, XML escaping and static templates.');

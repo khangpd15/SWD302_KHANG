@@ -1,4 +1,6 @@
+import { stayeaseCase } from './stayease-data.js';
 export const cases = {
+  stayease: stayeaseCase,
   autogo: {
     title: 'AutoGo · Thuê xe', tag: 'Đề chính · Activity',
     system: 'AutoGo', actor: 'Customer', staff: 'Staff', resource: 'Car', record: 'Booking', payment: 'Payment',
@@ -42,7 +44,7 @@ export const keywordRules = [
   { terms: ['contains', 'composed', 'part of', 'chứa'], title: 'Quan hệ whole–part', diagram: 'Class', action: 'Chỉ dùng composition (thoi đặc tại whole) nếu part phụ thuộc vòng đời whole; aggregation dùng thoi rỗng khi part tồn tại độc lập. Ghi giả định khi đề chưa nói rõ.', example: 'MedicalRecord ◆— PrescriptionItem; không biến mọi has-a thành composition.' },
   { terms: ['repository', 'generic', 'data access'], title: 'Repository Pattern bắt buộc', diagram: 'Class + Sequence', action: 'Repository<T> có findById/save. ConcreteRepository realization nét đứt tam giác rỗng → interface; Service dependency → Repository. Sequence phải gọi phương thức repository cụ thể.', example: 'CarRepository.isAvailable(id, start, end), BookingRepository.save(booking)' },
   { terms: ['available', 'availability', 'eligible', 'điều kiện'], title: 'Nhánh kiểm tra đầu vào', diagram: 'Sequence', action: 'Vẽ alt với guard thành công/thất bại. Nhánh thất bại trả thông báo và không tạo giao dịch. Library phải kiểm tra cả hạn mức và nợ phạt.', example: '[available AND eligible] / [unavailable OR ineligible]' },
-  { terms: ['payment', 'deposit', 'pay fee', 'thanh toán'], title: 'Nhánh kết quả thanh toán', diagram: 'Sequence', action: 'Tạo bản ghi Pending trước khi trả tiền theo đề. alt thành công: lưu payment + xác nhận; thất bại: hủy và lưu trạng thái, giải phóng tài nguyên nếu đã giữ.', example: '[payment success] / [payment failure]' },
+  { terms: ['payment', 'deposit', 'pay fee', 'thanh toán'], title: 'Nhánh kết quả thanh toán', diagram: 'Sequence', action: 'Đọc thứ tự trong đề: AutoGo tạo Booking trước payment, StayEase chỉ tạo Reservation sau payment Success. Vẽ alt Success/Failure; chỉ hủy/giải phóng nếu giao dịch hoặc tài nguyên đã được tạo/giữ.', example: '[payment success] / [payment failure]' },
   { terms: ['approve', 'approval', 'reject', 'duyệt'], title: 'Duyệt hoặc từ chối', diagram: 'Sequence', action: 'Đặt actor phê duyệt đúng vai trò. Với Library, sau Requested cần alt Approved/Rejected và chỉ giao sách ở nhánh được duyệt.', example: 'Librarian → UI → LoanService.approve(loanId)' },
   { terms: ['inspect', 'late', 'damaged', 'additional', 'fine', 'phụ phí'], title: 'Kiểm tra và tính phí', diagram: 'Activity', action: 'Actor nhập kết quả; Service tính phí. Decision tách có/không phí, merge trước khi hoàn tất. Nếu thu phí chưa thành công thì chưa đóng giao dịch.', example: '[late OR damaged] → calculateFine() → collectFine()' },
   { terms: ['swimlane', 'level 2', 'activity', 'return car', 'return book'], title: 'Activity Level 2', diagram: 'Activity', action: 'Phân làn theo Actor/Role và Component/Service. Tối thiểu Staff/Librarian và System; có initial, final, decision + guard và cập nhật trạng thái.', example: 'Staff.inspect() → BookingService.calculateFee() → completeBooking()' },

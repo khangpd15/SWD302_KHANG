@@ -45,7 +45,7 @@ globalThis.window={location:{hash:'#home'}};
 try {
  const {default:App}=await vite.ssrLoadModule('/src/App.jsx');
  const {default:Walkthrough, Highlight}=await vite.ssrLoadModule('/src/PeWalkthrough.jsx');
- for (const kind of ['autogo', 'library', 'medicare']) {
+ for (const kind of ['stayease', 'autogo', 'library', 'medicare']) {
   const lesson=renderToString(createElement(Walkthrough,{kind,onCustomize:()=>{}}));
   assert.ok(lesson.includes('Làm trong draw.io') && lesson.includes('<mark>') && lesson.includes('Dễ sai ở chỗ:'));
   assert.ok(lesson.includes('Đọc toàn bộ nguyên văn câu') && lesson.includes('.drawio'));

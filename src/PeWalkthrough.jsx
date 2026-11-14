@@ -1,8 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import exams from './data/pe-exams.json';
+import baseExams from './data/pe-exams.json';
+import { stayeaseExam } from './stayease-data';
 import { cases } from './pe-data';
 import { lessons } from './pe-lessons';
 import { downloadDrawio } from './pe-diagrams';
+const exams = { ...baseExams, stayease: stayeaseExam };
 
 export function Highlight({ text, terms }) {
   const escaped = [...terms].sort((a, b) => b.length - a.length).map(term => term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
@@ -39,6 +41,8 @@ export default function PeWalkthrough({ kind, onCustomize }) {
   return <section className="pe-lesson" aria-label="Hướng dẫn trực tiếp trên đề mẫu">
     <div className="pe-lesson-intro"><h2>Có sẵn đề. Đọc một câu, làm một bước.</h2><p>Bên trái là <b>câu tiếng Anh trong đề</b>, từ cần chú ý được tô vàng. Bên phải giải nghĩa và chỉ cụ thể cách đưa câu đó vào diagram.</p></div>
     <div className="pe-lesson-context"><div className="eyebrow">BUSINESS OVERVIEW · NGUYÊN VĂN ĐỀ {c.system}</div><blockquote><Highlight text={source.overview} terms={entityTerms}/></blockquote><p><b>Hiểu nhanh:</b> {c.summary}</p></div>
+    {kind === 'stayease' && <div className="pe-alert"><strong>Ba điểm phải giữ đúng của đề ảnh:</strong> Payment Success mới tạo Reservation; Payment Failure chỉ báo lỗi và dừng; checkout xong Room phải là <b>Cleaning</b>. Q2 dùng đúng BookingController và Layered Architecture.</div>}
+    {source.images && <details className="pe-full-question pe-original-images"><summary>Xem 4 ảnh đề gốc trong de_chua_giai</summary><p>Bấm ảnh để mở lớn. Nội dung đề bên dưới được chép lại từ chính các ảnh này.</p><div className="pe-source-images">{source.images.map((path, index) => <a href={`${import.meta.env.BASE_URL}${path}`} key={path} target="_blank" rel="noreferrer"><span>{index === 0 ? 'Business Overview' : `Question ${index}`}</span><img src={`${import.meta.env.BASE_URL}${path}`} alt={index === 0 ? 'Ảnh Business Overview StayEase' : `Ảnh đề StayEase câu ${index}`} loading="lazy"/></a>)}</div></details>}
     <div ref={questionNav} className="pe-question-tabs" aria-label="Chọn câu để học">{names.map((name, i) => <button key={i} className={question === i ? 'active' : ''} aria-pressed={question === i} onClick={() => chooseQuestion(i)}><span>Câu {i + 1} · {i === 1 ? 4 : 3} điểm</span><strong>{name} Diagram</strong></button>)}</div>
     <div className="pe-lesson-task"><div><span className="eyebrow">ĐANG LÀM CÂU {question + 1}</span><h2>{question === 0 ? 'Lấy danh từ, quan hệ và số lượng → dựng Class' : question === 1 ? `${c.usecase} → dựng luồng gọi và alt` : `${c.returnCase} → ${c.third === 'State' ? 'dựng vòng đời Appointment' : 'chia làn, rẽ nhánh, hoàn tất giao dịch'}`}</h2><p>{steps.length} bước giải thích bên dưới. Ví dụ method và giả định là gợi ý thiết kế, không phải nội dung nguyên văn.</p></div><button className="btn" onClick={download}>Tải mẫu câu {question + 1} .drawio ↓</button></div>
     <details className="pe-full-question"><summary>Đọc toàn bộ nguyên văn câu {question + 1}</summary><h3>{original.title}</h3><div>{original.text}</div><p>Nguồn: {source.source}</p></details>
