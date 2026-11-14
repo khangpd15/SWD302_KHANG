@@ -1,0 +1,2 @@
+# Preserve the supplied source workbook exactly, including its original newlines.
+public/templates/drawio_thiet_ke_chuan.drawio -text

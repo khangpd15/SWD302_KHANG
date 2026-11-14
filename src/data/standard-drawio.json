@@ -1,0 +1,22 @@
+{
+  "source": "drawio_thiet_ke_chuan.drawio",
+  "sha256": "f309e8d77e027930a68bafbe2be712a2a79564cddc2c217ccdc6abc16c3d28f3",
+  "pages": [
+    "Class-diagram",
+    "Sequence",
+    "activity"
+  ],
+  "styles": {
+    "classBox": "swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;",
+    "classRow": "text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;",
+    "separator": "line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;",
+    "lifeline": "shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;dropTarget=0;collapsible=0;recursiveResize=0;outlineConnect=0;portConstraint=eastwest;newEdgeStyle={\"curved\":0,\"rounded\":0};spacing=2;fontSize=15;",
+    "activation": "html=1;points=[[0,0,0,0,5],[0,1,0,0,-5],[1,0,0,0,5],[1,1,0,0,-5]];perimeter=orthogonalPerimeter;outlineConnect=0;targetShapes=umlLifeline;portConstraint=eastwest;newEdgeStyle={\"curved\":0,\"rounded\":0};spacing=2;fontSize=15;",
+    "frame": "shape=umlFrame;whiteSpace=wrap;html=1;pointerEvents=0;",
+    "call": "html=1;verticalAlign=bottom;endArrow=block;curved=0;rounded=0;",
+    "reply": "html=1;verticalAlign=bottom;endArrow=open;dashed=1;endSize=8;curved=0;rounded=0;",
+    "lane": "swimlane;startSize=20;html=1;",
+    "action": "html=1;dashed=0;whiteSpace=wrap;",
+    "decision": "rhombus;whiteSpace=wrap;html=1;"
+  }
+}

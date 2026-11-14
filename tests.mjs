@@ -46,10 +46,12 @@ try {
  const {default:App}=await vite.ssrLoadModule('/src/App.jsx');
  const {default:Walkthrough, Highlight}=await vite.ssrLoadModule('/src/PeWalkthrough.jsx');
  const {default:DrawioGuide}=await vite.ssrLoadModule('/src/DrawioGuide.jsx');
+ const {default:QuickSwapGuide}=await vite.ssrLoadModule('/src/QuickSwapGuide.jsx');
  const {cases}=await vite.ssrLoadModule('/src/pe-data.js');
  for (const kind of ['stayease','autogo','library','medicare']) for (const stage of ['setup','q1','q2','q3','export']) {
   const html=renderToString(createElement(DrawioGuide,{kind,config:cases[kind],stage,onStage:()=>{}}));
   assert.ok(html.includes('Cần dùng để hoàn thành') && html.includes('Khi nào phần này được xem là hoàn thành?'));
+  assert.ok(html.includes(`guides/${kind}-doi-nhanh.md`),`${kind} guide download matches selected exam`);
   if (['q1','q2','q3'].includes(stage)) assert.ok(html.includes('Hướng dẫn phân tích và điền nội dung') && html.includes('Phần B · Thao tác trên draw.io'));
   if (['q1','q2','q3'].includes(stage)) {
    assert.ok(html.includes('Hiểu ký hiệu và sửa lỗi UML') && html.includes('Xem đáp án và lý do'));
@@ -62,6 +64,13 @@ try {
   }
  }
  for (const kind of ['stayease', 'autogo', 'library', 'medicare']) {
+  for (const stage of ['q1','q2','q3']) {
+   const quick=renderToString(createElement(QuickSwapGuide,{kind,config:cases[kind],initialStage:stage,onOpenDetailed:()=>{}}));
+   assert.ok(quick.includes('Đọc đề và đổi chữ nhanh') && quick.includes('Những chỗ phải đọc đề, không chỉ thay tên'));
+   assert.equal((quick.match(/aria-label="Đổi nhanh:/g)||[]).length,6);
+   assert.ok(quick.includes(`guides/${kind}-doi-nhanh.md`) && quick.includes('drawio_thiet_ke_chuan.drawio'));
+   if(stage==='q3')assert.ok(quick.includes(kind==='medicare'?'State: thay bảng vòng đời':'Activity: đổi lane'));
+  }
   const lesson=renderToString(createElement(Walkthrough,{kind,onCustomize:()=>{}}));
   assert.ok(lesson.includes('Làm trong draw.io') && lesson.includes('<mark>') && lesson.includes('Dễ sai ở chỗ:'));
   assert.ok(lesson.includes('Đọc toàn bộ nguyên văn câu') && lesson.includes('.drawio'));

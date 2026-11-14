@@ -3,6 +3,8 @@ import { cases } from '../src/pe-data.js';
 import { drawioGuide, connectorGuide, drawioSources } from '../src/drawio-guide.js';
 import { methodGuide, explanationDraft } from '../src/pe-method.js';
 import { umlReading, readingMarkdown } from '../src/uml-reading.js';
+import { swapMarkdown } from '../src/quick-swap.js';
+import { lessons } from '../src/pe-lessons.js';
 
 const guide = drawioGuide(cases.stayease, 'stayease');
 const parts = ['# Dùng draw.io để hoàn thành 3 câu StayEase', '', 'Hướng dẫn thao tác kèm bộ .drawio đã giải. Mở mẫu để sửa hoặc dùng các bước này khi vẽ từ trang trắng. Menu có thể khác nhẹ giữa Desktop/Web, theme và ngôn ngữ.', ''];
@@ -60,4 +62,12 @@ for (const [kind, stage] of [['stayease','q1'],['stayease','q2'],['stayease','q3
 }
 reading.push('## Tài liệu chính thức để đối chiếu', '', '- [Class và thao tác draw.io](https://www.drawio.com/docs/diagram-types/uml/class-diagrams/)', '- [Sequence: lifeline, message, fragment](https://docs.staruml.io/v7/working-with-uml-diagrams/sequence-diagram/)', '- [State Machine: state, event và transition](https://www.visual-paradigm.com/guide/uml-unified-modeling-language/what-is-state-machine-diagram/)', '');
 await writeFile(new URL('doc-hieu-uml.md',folder),reading.join('\n'));
+for (const [kind,c] of Object.entries(cases)) {
+  const quick=[`# ${c.system} — đọc đề và đổi chữ nhanh`, '', 'Bộ .drawio được dựng lại theo drawio_thiet_ke_chuan.drawio: Class từng dòng, Sequence có lifeline/activation/alt, Activity có System/nhân viên/khách. State bổ sung riêng cho MediCare theo đề.', '', '1. Chọn đúng đề và Q. Đọc các câu trích dẫn để nhận diện yêu cầu.', '2. Dùng bảng tên: tìm chữ bằng Ctrl+F; nhấp đúp đúng tiêu đề/dòng để sửa. Đổi cùng Entity, Repository, ID, message và lane.', '3. Dùng bảng sửa luồng. Tên đúng chưa đủ nếu số lượng, guard, thứ tự tạo và trạng thái khác đề.', ''];
+  for (const [i,stage] of ['q1','q2','q3'].entries()) {
+    quick.push(...swapMarkdown(c,kind,stage), '### Câu đề cần đọc và việc cần làm', '');
+    for (const step of lessons[kind][i]) quick.push(`> ${step.quote.replaceAll('\n','\n> ')}`, '', `**Đưa vào hình:** ${step.actions[0]}`, '');
+  }
+  await writeFile(new URL(`${kind}-doi-nhanh.md`,folder),quick.join('\n'));
+}
 console.log('Generated offline StayEase draw.io tutorial.');

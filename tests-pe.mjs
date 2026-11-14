@@ -4,6 +4,12 @@ import { cases, matchKeywords } from './src/pe-data.js';
 import { buildDrawio } from './src/pe-diagrams.js';
 import { lessons } from './src/pe-lessons.js';
 import { stayeaseExam } from './src/stayease-data.js';
+import { createHash } from 'node:crypto';
+import standard from './src/data/standard-drawio.json' with { type: 'json' };
+import { swapPlan } from './src/quick-swap.js';
+
+const standardSource = await readFile(new URL('./public/templates/drawio_thiet_ke_chuan.drawio',import.meta.url));
+assert.equal(createHash('sha256').update(standardSource).digest('hex'),standard.sha256,'Supplied standard source preserved byte-for-byte');
 
 const exams = JSON.parse(await readFile(new URL('./src/data/pe-exams.json', import.meta.url), 'utf8'));
 exams.stayease = stayeaseExam;
@@ -25,6 +31,18 @@ assert.equal(matchKeywords('').length, 0);
 for (const [kind, config] of Object.entries(cases)) {
   const xml = buildDrawio(config, kind);
   const sequence = buildDrawio(config, kind, 'sequence');
+  const classes = buildDrawio(config, kind, 'class');
+  const third = buildDrawio(config,kind,'third');
+  assert.ok(classes.includes('childLayout=stackLayout') && classes.includes('Repository') && classes.includes('«controller»'));
+  assert.ok(!classes.includes('IGenericRepositoty') && !classes.includes('getter()'));
+  assert.ok(sequence.includes('shape=umlLifeline') && sequence.includes('shape=umlFrame') && sequence.includes('targetShapes=umlLifeline'));
+  assert.ok(kind==='medicare'?!third.includes('shape=swimlane'):third.includes('swimlane;startSize=20'));
+  if(kind==='library')assert.ok(third.includes('Fine &amp;gt; 0?') && third.includes('Late OR damaged?'));
+  for(const stage of ['q1','q2','q3']) {
+    const plan=swapPlan(config,kind,stage);
+    assert.equal(plan.anchors.length,6);
+    assert.ok(plan.anchors.every(row=>row.to===config[row.key]));
+  }
   const cells = [...sequence.matchAll(/<mxCell\b[\s\S]*?<\/mxCell>/g)].map(match => match[0]);
   const call = cells.find(cell => cell.includes('isAvailable(') && cell.includes('edge="1"'));
   assert.ok(call?.includes('endArrow=block;endFill=1;'), `${kind}: synchronous calls use filled heads`);
@@ -41,7 +59,9 @@ for (const [kind, config] of Object.entries(cases)) {
   assert.equal(await readFile(new URL(`./public/templates/${kind}_PE.drawio`, import.meta.url), 'utf8'), xml, 'Static download matches current generator');
   for (const only of ['architecture', 'class', 'sequence', 'third']) {
     assert.equal((buildDrawio(config, kind, only).match(/<diagram /g) || []).length, 1);
+    if(only!=='architecture')assert.equal(await readFile(new URL(`./public/templates/${kind}_${only}.drawio`,import.meta.url),'utf8'),buildDrawio(config,kind,only));
   }
+  assert.ok((await readFile(new URL(`./public/guides/${kind}-doi-nhanh.md`,import.meta.url),'utf8')).includes(config.system));
   const changed = buildDrawio({ ...config, actor: 'Buyer', record: 'Order', resource: 'Product', system: 'Shop', payment: 'Receipt', staff: 'Seller' }, kind);
   for (const token of ['Buyer', kind === 'stayease' ? 'BookingService' : 'OrderService', 'ProductRepository', 'ReceiptRepository', 'Shop']) assert.ok(changed.includes(token));
 }
