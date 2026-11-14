@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { cases, keywordRules, matchKeywords, normalize, checklist } from './pe-data';
 import { downloadDrawio } from './pe-diagrams';
 import './pe.css';
+import PeWalkthrough from './PeWalkthrough';
 
-const tabs = [['guide', '01', 'Đọc đề & format'], ['keywords', '02', 'Tra keyword'], ['builder', '03', 'Điền & tải diagram'], ['templates', '04', 'Kho .drawio'], ['check', '05', 'Soát bài']];
+const tabs = [['lesson', '01', 'Học ngay trên đề'], ['guide', '02', 'Format & lộ trình'], ['keywords', '03', 'Tra keyword'], ['builder', '04', 'Đổi tên & tải mẫu'], ['templates', '05', 'Kho .drawio'], ['check', '06', 'Soát bài']];
 const fields = [['system', 'Tên hệ thống', 'AutoGo'], ['actor', 'Người dùng chính', 'Customer'], ['staff', 'Vai trò xử lý', 'Staff'], ['resource', 'Tài nguyên', 'Car'], ['record', 'Giao dịch chính', 'Booking'], ['payment', 'Khoản tiền / phạt', 'Payment']];
 function KeywordCard({ rule }) {
   return <article className="pe-card pe-keyword"><span className="pe-badge">{rule.diagram}</span><h3>{rule.title}</h3><div className="pe-tags">{rule.terms.map(term => <code key={term}>{term}</code>)}</div><p>{rule.action}</p><div className="pe-example">{rule.example}</div></article>;
 }
 export default function PePage() {
-  const [tab, setTab] = useState('guide');
+  const [tab, setTab] = useState('lesson');
   const [kind, setKind] = useState('autogo');
   const [config, setConfig] = useState({ ...cases.autogo });
   const [search, setSearch] = useState('');
@@ -24,10 +25,11 @@ export default function PePage() {
   function download(only = 'all') { if (!valid) return; downloadDrawio(config, kind, only);setMessage('Đã tạo file .drawio. Mở bằng draw.io Desktop để chỉnh và kiểm tra trước khi dùng.'); }
   return <div className="pe-page">
     <div className="page-title"><div><div className="eyebrow">PRACTICAL EXAM · UML & SOFTWARE DESIGN</div><h1>Thi PE. Đọc đề, bắt ý, dựng hình.</h1><p className="subtitle">Từ nghiệp vụ đến Class, Sequence và Activity / State — có mẫu .drawio để sửa trực tiếp.</p></div><span className="pe-badge">PE WORKSPACE</span></div>
-    <section className="pe-hero"><div><span className="mini-pill">MỘT ĐỀ · BA GÓC NHÌN</span><h2>Nhận ra cấu trúc.<br/><em>Thay đúng keyword.</em></h2><p>Chọn tình huống gần đề của bạn, đọc quy tắc và đổi tên đồng bộ trong bộ diagram. Kiểm tra lại quan hệ và nhánh nghiệp vụ trước khi nộp.</p><button className="btn" onClick={() => setTab('builder')}>Điền tên & tạo .drawio <span aria-hidden="true">↗</span></button></div><div className="pe-hero-map" aria-label="Class mô tả cấu trúc, Sequence mô tả tương tác, Activity hoặc State mô tả quy trình hoặc vòng đời"><div><b>01</b><strong>Class</strong><small>Ai? Có gì? Quan hệ nào?</small></div><span>↓</span><div><b>02</b><strong>Sequence</strong><small>Ai gọi ai? Thành công / thất bại?</small></div><span>↓</span><div><b>03</b><strong>Activity / State</strong><small>Quy trình / vòng đời ra sao?</small></div></div></section>
-    <div className="pe-alert"><strong>Nguồn & điều kiện thi.</strong> Nội dung dựa trên bộ đề <b>SWD392 SP26</b>. Đề ghi <b>không dùng Internet</b>: tải mẫu và chuẩn bị công cụ offline trước giờ thi theo quy định. Kiểm tra format và cách nộp của ca thi thực tế.</div>
+    <div className="pe-start-path" aria-label="Cách học"><span><b>1</b> Chọn đề mẫu bên dưới</span><span><b>2</b> Đọc câu tô vàng và cách vẽ</span><span><b>3</b> Tải .drawio để làm theo</span></div>
     <nav className="pe-tabs" aria-label="Các phần ôn PE">{tabs.map(([key, n, title]) => <button key={key} className={tab === key ? 'active' : ''} aria-current={tab === key ? 'page' : undefined} onClick={() => { setTab(key);setMessage(''); }}><span>{n}</span>{title}</button>)}</nav>
     <div className="pe-case-bar"><label htmlFor="pe-case">Tình huống đang xem</label><select id="pe-case" value={kind} onChange={e => chooseCase(e.target.value)}>{Object.entries(cases).map(([key, c]) => <option key={key} value={key}>{c.title}</option>)}</select><span className="pe-badge">{selected.tag}</span></div>
+
+    {tab === 'lesson' && <PeWalkthrough key={kind} kind={kind} onCustomize={() => setTab('builder')}/>}
 
     {tab === 'guide' && <section aria-label="Format và cách phân tích đề">
       <div className="pe-metrics">{[['85 phút', 'Thời gian trong bộ đề'], ['3 điểm', 'Q1 · Design-level Class'], ['4 điểm', 'Q2 · Sequence'], ['3 điểm', `Q3 · ${selected.third}`]].map(([value, label]) => <div className="pe-card" key={label}><b>{value}</b><span>{label}</span></div>)}</div>

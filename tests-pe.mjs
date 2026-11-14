@@ -2,6 +2,20 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { cases, matchKeywords } from './src/pe-data.js';
 import { buildDrawio } from './src/pe-diagrams.js';
+import { lessons } from './src/pe-lessons.js';
+
+const exams = JSON.parse(await readFile(new URL('./src/data/pe-exams.json', import.meta.url), 'utf8'));
+for (const kind of Object.keys(cases)) {
+  assert.equal(lessons[kind].length, 3);
+  for (const [index, steps] of lessons[kind].entries()) {
+    assert.ok(steps.length >= 3, `${kind} Q${index + 1} has a detailed walkthrough`);
+    for (const step of steps) {
+      assert.ok(exams[kind].questions[index].text.includes(step.quote), `${kind} Q${index + 1}: quote matches supplied exam: ${step.title}`);
+      assert.ok(step.terms.some(term => step.quote.toLowerCase().includes(term.toLowerCase())));
+      assert.ok(step.actions.length >= 3 && step.example && step.transfer && step.pitfall);
+    }
+  }
+}
 
 assert.ok(matchKeywords('KE THUA va thanh toan, vong doi').some(r => r.title.includes('Kế thừa')));
 assert.ok(matchKeywords('at most one Fine').some(r => r.example.includes('0..1')));

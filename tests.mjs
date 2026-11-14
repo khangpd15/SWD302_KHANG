@@ -44,6 +44,13 @@ const vite=await createServer({server:{middlewareMode:true},appType:'custom',opt
 globalThis.window={location:{hash:'#home'}};
 try {
  const {default:App}=await vite.ssrLoadModule('/src/App.jsx');
+ const {default:Walkthrough, Highlight}=await vite.ssrLoadModule('/src/PeWalkthrough.jsx');
+ for (const kind of ['autogo', 'library', 'medicare']) {
+  const lesson=renderToString(createElement(Walkthrough,{kind,onCustomize:()=>{}}));
+  assert.ok(lesson.includes('Làm trong draw.io') && lesson.includes('<mark>') && lesson.includes('Dễ sai ở chỗ:'));
+  assert.ok(lesson.includes('Đọc toàn bộ nguyên văn câu') && lesson.includes('.drawio'));
+ }
+ assert.equal(renderToString(createElement(Highlight,{text:'Repository<T> + User',terms:['Repository<T>','+']})), '<mark>Repository&lt;T&gt;</mark> <mark>+</mark> User');
  for(const [route,expected] of [['home','Sẵn sàng chinh phục SWD301?'],['exams','20 mã đề. 20 lần vững hơn.'],['pe','Thi PE. Đọc đề, bắt ý, dựng hình.'],['bank','Ngân hàng 202 câu hỏi.'],['tips','Bắt từ khóa. Nắm ý chính.'],['saved','Những câu bạn muốn nhớ.'],['history','Mỗi lần luyện, một chút tiến bộ.']]){
   window.location.hash='#'+route;
   const html=renderToString(createElement(App));assert.ok(html.includes(expected),`React page ${route}`);
